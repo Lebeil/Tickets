@@ -23,7 +23,7 @@ export default function CardLayout() {
   }
 
   return (
-    <HStack gap={4} p={4} align="flex-start" bg="blue.500" h="100vh">
+    <HStack gap={4} p={4} align="flex-start" bg="blue.500" h="100vh" color="black">
       {lists.map((list) => (
         <Card key={list.id} title={list.title} />
       ))}

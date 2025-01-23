@@ -51,6 +51,7 @@ const Card = ({ title }: { title: string }) => {
                 <Button
                     variant="ghost"
                     width="100%"
+                    color="black"
                     justifyContent="flex-start"
                     onClick={() => setIsAdding(true)}
                 >
