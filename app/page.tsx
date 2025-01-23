@@ -1,7 +1,7 @@
 'use client'
 
 import { HStack, Button, Box } from '@chakra-ui/react';
-import Card from '../components/card';
+import Card from '@/components/Card';
 import { useState } from 'react';
 
 interface List {
