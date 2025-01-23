@@ -29,7 +29,7 @@ export default function CardLayout() {
       ))}
 
       {isAddingList ? (
-        <Box bg="gray.200" borderRadius="lg" w="300px" p={4}>
+        <Box bg="gray.100" borderRadius="lg" w="300px" p={4}>
           <input
             value={newListTitle}
             onChange={(e) => setNewListTitle(e.target.value)}
@@ -40,6 +40,7 @@ export default function CardLayout() {
               marginBottom: '8px',
               borderRadius: '4px',
               border: '2px solid blue',
+              backgroundColor: 'gray.100',
             }}
             autoFocus
           />
