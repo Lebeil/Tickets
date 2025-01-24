@@ -1,68 +1,63 @@
 'use client'
 
-import { HStack, Button, Box } from '@chakra-ui/react';
-import Card from '../components/Card';
 import { useState } from 'react';
+import { Box, HStack } from '@chakra-ui/react';
+import { DragDropContext, DropResult } from '@hello-pangea/dnd';
+import { List } from '@/components/List';
 
-interface List {
-  id: number;
-  title: string;
+interface CardItem {
+  id: string;
+  text: string;
+  listId: string;
 }
 
-export default function CardLayout() {
-  const [lists, setLists] = useState<List[]>([])
-  const [isAddingList, setIsAddingList] = useState(false)
-  const [newListTitle, setNewListTitle] = useState('')
+export default function Board() {
+  const lists = [
+    { id: 'list-1', title: 'À faire' },
+    { id: 'list-2', title: 'En cours' },
+    { id: 'list-3', title: 'Terminé' },
+  ];
 
-  const addList = () => {
-    if (newListTitle.trim()) {
-      setLists([...lists, { id: Date.now(), title: newListTitle }])
-      setNewListTitle('')
-      setIsAddingList(false)
-    }
-  }
+  const [cards, setCards] = useState<CardItem[]>([]);
+
+  const onDragEnd = (result: DropResult) => {
+    const { destination, draggableId } = result;
+
+    if (!destination) return;
+
+    const card = cards.find(c => c.id === draggableId);
+    if (!card) return;
+
+    setCards(prevCards => {
+      const newCards = prevCards.filter(c => c.id !== draggableId);
+      return [...newCards, { ...card, listId: destination.droppableId }];
+    });
+  };
+
+  const handleAddCard = (listId: string, text: string) => {
+    const newCard: CardItem = {
+      id: `card-${Date.now()}`,
+      text,
+      listId,
+    };
+    setCards(prevCards => [...prevCards, newCard]);
+  };
 
   return (
-    <HStack gap={4} p={4} align="flex-start" bg="blue.500" h="100vh" color="black">
-      {lists.map((list) => (
-        <Card key={list.id} title={list.title} />
-      ))}
-
-      {isAddingList ? (
-        <Box bg="gray.100" borderRadius="lg" w="300px" p={4}>
-          <input
-            value={newListTitle}
-            onChange={(e) => setNewListTitle(e.target.value)}
-            placeholder="Saisissez le titre de la liste..."
-            style={{
-              width: '100%',
-              padding: '8px',
-              marginBottom: '8px',
-              borderRadius: '4px',
-              border: '2px solid blue',
-              backgroundColor: 'gray.100',
-            }}
-            autoFocus
-          />
-          <Button size="sm" colorScheme="blue" onClick={addList} mr={2}>
-            Ajouter la liste
-          </Button>
-          <Button size="sm" onClick={() => setIsAddingList(false)}>
-            Annuler
-          </Button>
-        </Box>
-      ) : (
-        <Button
-          w="300px"
-          h="40px"
-          bg="gray.200"
-          color="black"
-          _hover={{ bg: 'gray.300' }}
-          onClick={() => setIsAddingList(true)}
-        >
-          + Ajouter une liste
-        </Button>
-      )}
-    </HStack>
-  )
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Box p={4} bg="blue.500" minH="100vh">
+        <HStack align="start" gap={4}>
+          {lists.map((list) => (
+            <List
+              key={list.id}
+              id={list.id}
+              title={list.title}
+              cards={cards.filter(card => card.listId === list.id)}
+              onAddCard={handleAddCard}
+            />
+          ))}
+        </HStack>
+      </Box>
+    </DragDropContext>
+  );
 }
